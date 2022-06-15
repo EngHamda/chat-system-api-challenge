@@ -31,15 +31,16 @@ The system allows the creation of new applications
    ```bash
         git clone https://github.com/EngHamda/chat-system-api-challenge.git chat_system_api
    ```
-2. Update database username & password in **config/database.yml**
-3. Create database
+2. Install bundles
    ```bash
         cd chat_system_api
-        rake db:create
-   ```
-4. Install bundles
-   ```bash
         bundle install
+   ```
+3. Update database username & password in **config/database.yml**
+4. Create database
+   ```bash
+        rake db:create
+        rails db:migrate
    ```
 5. Make sure services are running
 
