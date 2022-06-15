@@ -44,8 +44,14 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem "searchkick", "~> 4.6.3"#, "~> 5.0"
+#For use elasticsearch
+gem 'searchkick', '~> 4.6.3'#, "~> 5.0"
 
-gem "elasticsearch", "~> 6.8.3"#, "~> 8.2"# For Elasticsearch 6, use version 4.6.3
+gem 'elasticsearch', '~> 6.8.3'#, "~> 8.2"# For Elasticsearch 6, use version 4.6.3
 
 # gem 'go-on-rails', '~> 0.4.0'
+
+#For use sidekiq `queuing creation chats, messages requests`
+gem 'sidekiq', '>=5.2.10'
+
+# gem 'sinatra', '= 3.0.0', github: 'sinatra/sinatra' # for use sidekiq dashboard

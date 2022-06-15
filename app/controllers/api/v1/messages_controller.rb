@@ -60,6 +60,8 @@ class Api::V1::MessagesController < ApplicationController
     end
 
     def find_chat_by_chat_number_and_app_token
+        #ask: what MessaeWorker functionality to queuing creation request?
+        Api::V1::MessageWorker.perform_async(params[:application_token], params[:chat_number])
         #get chat from applications by token, chats by chat_number
         @chat_application = Api::V1::SharedMethod.find_chat_application(params[:chat_number], params[:application_token])
         if !@chat_application

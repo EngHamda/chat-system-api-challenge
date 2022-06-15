@@ -1,5 +1,5 @@
 class Message < ApplicationRecord
-    searchkick #word_middle: [:chat_id]
+    searchkick word_middle: [:body]#[:chat_id]
     belongs_to :chat, optional: true
     validates :chat_id, presence: true
     #validate chat & message_number unique

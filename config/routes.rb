@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     end
   end
 
+  #For sidekiq dashboard
+  # If this is a Rails app in API mode, 
+  #     you need to enable sessions. https://guides.rubyonrails.org/api_app.html#using-session-middlewares
+  # require 'sidekiq/web'
+  # mount Sidekiq::Web => "/sidekiq"
+
   #api
   namespace :api do
     namespace :v1 do
