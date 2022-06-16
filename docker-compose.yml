@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:5.7
+    # restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: "chat_system_api_development"
+      MYSQL_ROOT_PASSWORD: "password"
+    volumes:
+      - /opt/docker_mysql_v/mysql_data:/var/lib/mysql
+      - /tmp/docker_mysql_v/mysqld:/var/run/mysqld
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+    #   timeout: 20s
+    #   retries: 10
+
+  api:
+    build: .
+    command: rails s -p 3000 -b '0.0.0.0'
+    volumes:
+      #this value must like in db container
+      - /tmp/docker_mysql_v/mysqld:/run/mysqld
+    ports:
+      - "3001:3000"
+    #let's make the app service depend_on the db: service
+    #so that when we use our rails app it refers to the database to store data and it is linked to the database.
+    depends_on:
+      - db
+    links:
+      - db
+    #Now we want to add the environment variables for the rails application.
+    environment:
+      RAILS_ENV: development
+      # DB_USER: root
+      # DB_NAME: "chat_system_api_development"
+      # DB_PASSWORD: password
+      # DB_ROOT_PASSWORD: password
+      # DB_HOST: db
