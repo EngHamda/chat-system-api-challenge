@@ -1,4 +1,5 @@
 class Message < ApplicationRecord
+    searchkick callbacks: :async
     searchkick word_middle: [:body]#[:chat_id]
     belongs_to :chat, optional: true
     validates :chat_id, presence: true

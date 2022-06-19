@@ -17,6 +17,53 @@ services:
     #   timeout: 20s
     #   retries: 10
 
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      #need to add this volume in volumes section {in same level of services section}
+      - elastic-data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    networks:
+      - es_network
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:9200 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  redis:
+    image: "redis:4.0.9"
+    command: redis-server
+    ports:
+      - "10001:6379"
+    volumes:
+      - "redis_data:/data"
+
+  sidekiq:
+    build: .
+    command: bundle exec sidekiq
+    volumes:
+      - ".:/app" # app is working dir in Dockerfile
+      - "/app/tmp" # don't mount tmp directory
+    depends_on:
+      - db
+      - redis
+    environment:
+      - REDIS_URL_SIDEKIQ=redis://redis:10001/1
+
   api:
     build: .
     command: rails s -p 3000 -b '0.0.0.0'
@@ -29,8 +76,11 @@ services:
     #so that when we use our rails app it refers to the database to store data and it is linked to the database.
     depends_on:
       - db
+      - elasticsearch
     links:
       - db
+      - elasticsearch
+      - redis
     #Now we want to add the environment variables for the rails application.
     environment:
       RAILS_ENV: development
@@ -39,3 +89,13 @@ services:
       # DB_PASSWORD: password
       # DB_ROOT_PASSWORD: password
       # DB_HOST: db
+
+volumes:
+  es_data:
+    driver: local
+  redis_data:
+    driver: local # is already local by default
+
+networks:
+  es_network:
+    driver: bridge
